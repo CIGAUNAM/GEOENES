@@ -2,41 +2,54 @@
 
 <!DOCTYPE html>
 <html class="no-js">
-    <head>
-        <meta charset="utf-8" />
-        <title>
-            {% block title %}
-                {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
-            {% endblock %}
-            {% block title_suffix %}
-                {% with self.get_site.site_name as site_name %}
-                    {% if site_name %}- {{ site_name }}{% endif %}
-                {% endwith %}
-            {% endblock %}
-        </title>
-        <meta name="description" content="" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        {# Global stylesheets #}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/GEOENES.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'leaflet/leaflet.css' %}">
-
-        {% block extra_css %}
-            {# Override this in templates to add extra stylesheets #}
+<head>
+    <meta charset="utf-8"/>
+    <title>
+        {% block title %}
+            {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
         {% endblock %}
-    </head>
-
-    <body class="{% block body_class %}{% endblock %}">
-        {% wagtailuserbar %}
-
-        {% block content %}{% endblock %}
-
-        {# Global javascript #}
-        <script type="text/javascript" src="{% static 'js/GEOENES.js' %}"></script>
-        <script type="text/javascript" src="{% static 'leaflet/leaflet.js' %}"></script>
-
-        {% block extra_js %}
-            {# Override this in templates to add extra javascript #}
+        {% block title_suffix %}
+            {% with self.get_site.site_name as site_name %}
+                {% if site_name %}- {{ site_name }}{% endif %}
+            {% endwith %}
         {% endblock %}
-    </body>
+    </title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    {# Global stylesheets #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/GEOENES.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet/leaflet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet/Control.MiniMap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/fontawesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'select2/css/select2.css' %}">
+
+    {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+{% wagtailuserbar %}
+
+{% block content %}{% endblock %}
+
+{# Global javascript #}
+<script type="text/javascript" src="{% static 'js/jquery-3.3.1.js' %}"></script>
+<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/GEOENES.js' %}"></script>
+<script type="text/javascript" src="{% static 'leaflet/leaflet.js' %}"></script>
+<script type="text/javascript" src="{% static 'leaflet/leaflet-hash.js' %}"></script>
+<script type="text/javascript" src="{% static 'leaflet/Control.MiniMap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'leaflet/L.TileLayer.BetterWMS.js' %}"></script>
+<script type="text/javascript" src="{% static 'leaflet/L.Control.Custom.js' %}"></script>
+<script type="text/javascript" src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
+<script type="text/javascript" src="{% static 'select2/js/select2.js' %}"></script>
+
+
+{% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+{% endblock %}
+</body>
 </html>
