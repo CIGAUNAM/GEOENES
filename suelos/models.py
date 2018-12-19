@@ -23,6 +23,26 @@ class ClaseRoca(models.Model):
         return self.claseroca_nombre
 
 
+class TipoRoca(models.Model):
+    tiporoca_nombre = models.CharField(max_length=120, unique=True)
+
+    def __str__(self):
+        return self.tiporoca_nombre
+
+
+class TipoSuelo(models.Model):
+    tiposuelo_nombre = models.CharField(max_length=120, unique=True)
+
+    def __str__(self):
+        return self.tiposuelo_nombre
+
+class UsoSuelo(models.Model):
+    usosuelo_nombre = models.CharField(max_length=120, unique=True)
+
+    def __str__(self):
+        return self.usosuelo_nombre
+
+
 
 
 class Suelo(models.Model):
@@ -32,5 +52,5 @@ class Suelo(models.Model):
     tipo_roca = models.CharField(max_length=120)
     tipo_suelo = models.CharField(max_length=120)
     uso_suelo = models.CharField(max_length=120)
-    area = models.IntegerField()
+    area = models.IntegerField(blank=True, null=True)
     geom = models.MultiPolygonField()

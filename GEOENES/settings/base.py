@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
+    'wagtail.contrib.modeladmin',
 
     'modelcluster',
     'taggit',
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    'suelos',
+    'suelos.apps.SuelosConfig',
 ]
 
 MIDDLEWARE = [
