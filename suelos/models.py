@@ -1,4 +1,7 @@
 from django.contrib.gis.db import models
+from wagtail.core.models import Page
+from wagtail.core.fields import RichTextField
+from wagtail.admin.edit_handlers import FieldPanel
 
 # Create your models here.
 
@@ -36,13 +39,12 @@ class TipoSuelo(models.Model):
     def __str__(self):
         return self.tiposuelo_nombre
 
+
 class UsoSuelo(models.Model):
     usosuelo_nombre = models.CharField(max_length=120, unique=True)
 
     def __str__(self):
         return self.usosuelo_nombre
-
-
 
 
 class Suelo(models.Model):
@@ -54,3 +56,11 @@ class Suelo(models.Model):
     uso_suelo = models.CharField(max_length=120)
     area = models.IntegerField(blank=True, null=True)
     geom = models.MultiPolygonField()
+
+
+class SuelosIndexPage(Page):
+    body = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('body', classname='full')
+    ]
