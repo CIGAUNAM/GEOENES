@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-suelosindexpage{% endblock %}
+
+{% block extra_css %}
+    <style> #main {
+        z-index: 1;
+        height: 680px;
+    } </style>
+{% endblock %}
+
+{% block content %}
+
+    <div id="main" style="position: relative; overflow: hidden;" class="leaflet-container-default"></div>{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/suelos.js' %}"></script>
+{% endblock %}
