@@ -1,5 +1,5 @@
 from wagtail.contrib.modeladmin.options import (ModelAdmin, ModelAdminGroup, modeladmin_register)
-from .models import *
+from . models import *
 
 class EntidadAdmin(ModelAdmin):
     model = Entidad
@@ -58,7 +58,22 @@ class SueloAdmin(ModelAdmin):
     list_filter = ('entidad', 'municipio', 'clase_roca', )
     search_fields = ('entidad', 'municipio', 'clase_roca', )
 
+class PaletaColorAdmin(ModelAdmin):
+    model = PaletaColor
+    menu_label = 'Paletas de color'  # ditch this to use verbose_name_plural from model
+    menu_icon = 'doc-full-inverse'  # change as required
+    list_display = ('nombre_paleta', )
+    list_filter = ('nombre_paleta', )
+    search_fields = ('nombre_paleta',)
 
+
+class ColorMapAdmin(ModelAdmin):
+    model = ColorMap
+    menu_label = 'Mapas de color'  # ditch this to use verbose_name_plural from model
+    menu_icon = 'doc-full-inverse'  # change as required
+    list_display = ('colormap_nombre', 'colormap_paleta')
+    list_filter = ('colormap_nombre', 'colormap_paleta')
+    search_fields = ('colormap_nombre', 'colormap_paleta')
 
 
 modeladmin_register(EntidadAdmin)
@@ -68,3 +83,5 @@ modeladmin_register(TipoRocaAdmin)
 modeladmin_register(TipoSueloAdmin)
 modeladmin_register(UsoSueloAdmin)
 modeladmin_register(SueloAdmin)
+modeladmin_register(PaletaColorAdmin)
+modeladmin_register(ColorMapAdmin)
