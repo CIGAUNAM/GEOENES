@@ -69,8 +69,8 @@ class ColorMap(models.Model):
     colormap_nombre = models.CharField(max_length=100)
     colormap_paleta = models.ForeignKey(PaletaColor, on_delete=models.PROTECT)
     colormap_importstring = models.CharField(max_length=190)
-    colormap_continuous = models.ImageField(null=True)
-    colormap_discrete = models.ImageField(null=True)
+    colormap_continuous = models.ImageField(null=True, blank=True)
+    colormap_discrete = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return "{} - {}".format(self.colormap_paleta, self.colormap_nombre)
