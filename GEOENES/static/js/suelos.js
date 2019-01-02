@@ -54,22 +54,134 @@ $(function () {
         tiled: true,
         format: 'image/png',
         transparent: true,
-        minZoom: 6,
+        minZoom: 5,
         maxZoom: 22,
     }).addTo(map);
 
+    var suelos2 = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
+        layers: 'ENES:suelos_suelo',
+        tiled: true,
+        format: 'image/png',
+        transparent: true,
+        minZoom: 5,
+        maxZoom: 22,
+    })
+
+    function makeLayerWMS() {
+        newlayer = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
+            layers: 'ENES:suelos_suelo',
+            tiled: true,
+            format: 'image/png',
+            transparent: true,
+            minZoom: 5,
+            maxZoom: 22,
+        });
+        return newlayer;
+    }
+
+
     var baseLayers = {
-        "Satelite": satelite,
-        "Calles": calles
+        "Satelite (Google)": satelite,
+        "Calles (Google)": calles
     };
 
     var overlays = {
+        //"Suelos <a href=\"#\" onclick=\"alert(); alert(2);\">je</a>": suelos,
         "Suelos": suelos,
     };
+
+    L.control.custom({
+        position: 'topright',
+        content:
+            '<button type="button" class="ui-button ui-widget ui-corner-all" data-toggle="modal" id="agregarcapa">' +
+            'Agrear capa nueva' +
+            '</button>',
+        classes: 'btn-group-horizontal btn-group-sm',
+        style: {margin: '10px', padding: '0px 0 0 0', cursor: 'pointer'},
+        datas: {'foo': 'bar',},
+
+    }).addTo(map);
+
+    tips = $(".validateTips");
+
+    function checkLength(o, n, min, max) {
+        if (o.val().length > max || o.val().length < min) {
+            o.addClass("ui-state-error");
+            updateTips("Length of " + n + " must be between " +
+                min + " and " + max + ".");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function updateTips(t) {
+        tips
+            .text(t)
+            .addClass("ui-state-highlight");
+        setTimeout(function () {
+            tips.removeClass("ui-state-highlight", 1500);
+        }, 500);
+    }
+
+    function agregarCapa() {
+        var valid = true;
+        console.log($("#nombre").val())
+        valid = valid && checkLength($("#nombre"), "nombre", 3, 36);
+
+        if (valid) {
+            console.log("valid");
+            console.log($("#nombre").val())
+            overlays[$("#nombre").val()] = suelos2
+            suelos2.addTo(map)
+            controles.remove(map)
+            //controles.addTo(map);
+
+
+            console.log(overlays)
+            newlayerdialog.dialog("close");
+
+        }
+    }
+
+    var newlayerdialog = $("#dialog-newlayer").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 800,
+        height: 600,
+        buttons: {
+            "Agregar capa": agregarCapa,
+            "Cancelar": function () {
+                newlayerdialog.dialog("close");
+            }
+        },
+        close:
+
+            function () {
+                $("#layerform")[0].reset()
+                $("#id_entidad").val(null).trigger('change');
+                $("#id_municipio").val(null).trigger('change');
+                $("#id_clase_roca").val(null).trigger('change');
+                $("#id_tipo_roca").val(null).trigger('change');
+                $("#id_tipo_suelo").val(null).trigger('change');
+                $("#id_uso_suelo").val(null).trigger('change');
+            }
+    });
+
+    $("#agregarcapa").on("click", function () {
+        console.log("agregar capa")
+        newlayerdialog.dialog("open")
+        console.log("luego del dialog")
+
+    });
+
+
+    //overlays["otro"] = suelos;
 
     var controles = L.control.layers(baseLayers, overlays);
 
     controles.addTo(map);
+
 
     L.control.zoom({
         position: 'topright'

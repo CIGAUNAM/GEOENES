@@ -27,6 +27,7 @@ from wagtail.contrib.forms.forms import FormBuilder
 from wagtail.contrib.forms.models import (
     FORM_FIELD_CHOICES, AbstractEmailForm, AbstractFormField, AbstractFormSubmission)
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.sitemaps import Sitemap
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core.blocks import CharBlock, RichTextBlock, StructBlock
 from wagtail.core.fields import RichTextField, StreamField
@@ -362,6 +363,11 @@ class SingleEventPage(EventPage):
 
 
 SingleEventPage.content_panels = [FieldPanel('excerpt')] + EventPage.content_panels
+
+
+# "custom" sitemap object
+class EventSitemap(Sitemap):
+    pass
 
 
 # Event index (has a separate AJAX template, and a custom template context)
@@ -863,6 +869,10 @@ class SingletonPage(Page):
             and not cls.objects.exists()
 
 
+class SingletonPageViaMaxCount(Page):
+    max_count = 1
+
+
 class PageChooserModel(models.Model):
     page = models.ForeignKey('wagtailcore.Page', help_text='help text', on_delete=models.CASCADE)
 
@@ -906,7 +916,10 @@ class CustomRendition(AbstractRendition):
 
 
 class CustomDocument(AbstractDocument):
-    admin_form_fields = Document.admin_form_fields
+    description = models.TextField(blank=True)
+    admin_form_fields = Document.admin_form_fields + (
+        'description',
+    )
 
 
 class StreamModel(models.Model):

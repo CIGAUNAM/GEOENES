@@ -18,6 +18,7 @@ from django.views.decorators.vary import vary_on_headers
 from django.views.generic import View
 
 from wagtail.admin import messages, signals
+from wagtail.admin.action_menu import PageActionMenu
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.forms.search import SearchForm
 from wagtail.admin.navigation import get_explorable_root_page
@@ -48,8 +49,8 @@ def index(request, parent_page_id=None):
     # If this page isn't a descendant of the user's explorable root page,
     # then redirect to that explorable root page instead.
     if not (
-        parent_page.pk == root_page.pk or
-        parent_page.is_descendant_of(root_page)
+        parent_page.pk == root_page.pk
+        or parent_page.is_descendant_of(root_page)
     ):
         return redirect('wagtailadmin_explore', root_page.pk)
 
@@ -303,6 +304,7 @@ def create(request, content_type_app_name, content_type_model_name, parent_page_
         'page_class': page_class,
         'parent_page': parent_page,
         'edit_handler': edit_handler,
+        'action_menu': PageActionMenu(request, view='create', parent_page=parent_page),
         'preview_modes': page.preview_modes,
         'form': form,
         'next': next_url,
@@ -494,8 +496,8 @@ def edit(request, page_id):
                                                          form=form,
                                                          request=request)
             errors_debug = (
-                repr(edit_handler.form.errors) +
-                repr([
+                repr(edit_handler.form.errors)
+                + repr([
                     (name, formset.errors)
                     for (name, formset) in edit_handler.form.formsets.items()
                     if formset.errors
@@ -531,6 +533,7 @@ def edit(request, page_id):
         'content_type': content_type,
         'edit_handler': edit_handler,
         'errors_debug': errors_debug,
+        'action_menu': PageActionMenu(request, view='edit', page=page),
         'preview_modes': page.preview_modes,
         'form': form,
         'next': next_url,
@@ -731,9 +734,9 @@ def move_choose_destination(request, page_to_move_id, viewed_page_id=None):
         target.can_choose = page_perms.can_move_to(target)
 
         target.can_descend = (
-            not(target == page_to_move or
-                target.is_child_of(page_to_move)) and
-            target.get_children_count()
+            not(target == page_to_move
+                or target.is_child_of(page_to_move))
+            and target.get_children_count()
         )
 
         child_pages.append(target)
@@ -754,6 +757,11 @@ def move_confirm(request, page_to_move_id, destination_id):
     if not page_to_move.permissions_for_user(request.user).can_move_to(destination):
         raise PermissionDenied
 
+    for fn in hooks.get_hooks('before_move_page'):
+        result = fn(request, page_to_move, destination)
+        if hasattr(result, 'status_code'):
+            return result
+
     if request.method == 'POST':
         # any invalid moves *should* be caught by the permission check above,
         # so don't bother to catch InvalidMoveToDescendant
@@ -762,6 +770,11 @@ def move_confirm(request, page_to_move_id, destination_id):
         messages.success(request, _("Page '{0}' moved.").format(page_to_move.get_admin_display_title()), buttons=[
             messages.button(reverse('wagtailadmin_pages:edit', args=(page_to_move.id,)), _('Edit'))
         ])
+
+        for fn in hooks.get_hooks('after_move_page'):
+            result = fn(request, page_to_move)
+            if hasattr(result, 'status_code'):
+                return result
 
         return redirect('wagtailadmin_explore', destination.id)
 
@@ -849,7 +862,7 @@ def copy(request, page_id):
             can_publish = parent_page.permissions_for_user(request.user).can_publish_subpage()
 
             # Copy the page
-            new_page = page.copy(
+            new_page = page.specific.copy(
                 recursive=form.cleaned_data.get('copy_subpages'),
                 to=parent_page,
                 update_attrs={
@@ -1140,6 +1153,7 @@ def revisions_revert(request, page_id, revision_id):
         'content_type': content_type,
         'edit_handler': edit_handler,
         'errors_debug': None,
+        'action_menu': PageActionMenu(request, view='revisions_revert', page=page),
         'preview_modes': page.preview_modes,
         'form': form,  # Used in unit tests
     })

@@ -6,6 +6,7 @@
 {% block body_class %}template-suelosindexpage{% endblock %}
 
 {% block extra_css %}
+    {{ form.media.css }}
     <style> #main {
         z-index: 1;
         height: 680px;
@@ -14,8 +15,77 @@
 
 {% block content %}
 
-    <div id="main" style="position: relative; overflow: hidden;" class="leaflet-container-default"></div>{% endblock %}
+    <div id="main" style="position: relative; overflow: hidden;" class="leaflet-container-default"></div>
+
+    <div id="dialog-newlayer" title="Agregar capa nueva">
+        <div class="widget3">
+            <p>Utilice los filtros deseados de acuerdo a lo que quiera representar</p>
+            <p class="validateTips"></p>
+
+            <form id="layerform">
+                <fieldset>
+                    <legend>Nombre de capa</legend>
+                    <div>
+                        <input type="text" class="form-control pull-right" style="width: 98%" name="nombre" id="nombre"
+                               required class="text ui-widget-content ui-corner-all">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Entidades</legend>
+                    <div>
+                        {{ form.entidad }}
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Municipios</legend>
+                    <div>
+                        {{ form.municipio }}
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Clases de roca</legend>
+                    <div>
+                        {{ form.clase_roca }}
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Tipo de roca</legend>
+                    <div>
+                        {{ form.tipo_roca }}
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Tipo de suelo</legend>
+                    <div>
+                        {{ form.tipo_suelo }}
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Uso de suelo</legend>
+                    <div>
+                        {{ form.uso_suelo }}
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+
+
+    <div id="dialog-editlayer" title="Modificar capa seleccionada">
+
+    </div>
+
+{% endblock %}
+
 
 {% block extra_js %}
     <script type="text/javascript" src="{% static 'js/suelos.js' %}"></script>
+    {{ form.media.js }}
 {% endblock %}

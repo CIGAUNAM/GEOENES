@@ -60,13 +60,13 @@ class TestImageIndexView(TestCase, WagtailTestUtils):
 
         # prev link should exist and include collection_id
         self.assertTrue(
-            ("?p=1&amp;collection_id=%i" % evil_plans_collection.id) in response_body or
-            ("?collection_id=%i&amp;p=1" % evil_plans_collection.id) in response_body
+            ("?p=1&amp;collection_id=%i" % evil_plans_collection.id) in response_body
+            or ("?collection_id=%i&amp;p=1" % evil_plans_collection.id) in response_body
         )
         # next link should exist and include collection_id
         self.assertTrue(
-            ("?p=3&amp;collection_id=%i" % evil_plans_collection.id) in response_body or
-            ("?collection_id=%i&amp;p=3" % evil_plans_collection.id) in response_body
+            ("?p=3&amp;collection_id=%i" % evil_plans_collection.id) in response_body
+            or ("?collection_id=%i&amp;p=3" % evil_plans_collection.id) in response_body
         )
 
     def test_ordering(self):
@@ -74,6 +74,16 @@ class TestImageIndexView(TestCase, WagtailTestUtils):
         for ordering in orderings:
             response = self.get({'ordering': ordering})
             self.assertEqual(response.status_code, 200)
+
+    def test_collection_order(self):
+        root_collection = Collection.get_first_root_node()
+        root_collection.add_child(name="Evil plans")
+        root_collection.add_child(name="Good plans")
+
+        response = self.get()
+        self.assertEqual(
+            [collection.name for collection in response.context['collections']],
+            ['Root', 'Evil plans', 'Good plans'])
 
 
 class TestImageAddView(TestCase, WagtailTestUtils):

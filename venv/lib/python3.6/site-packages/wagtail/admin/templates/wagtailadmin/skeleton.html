@@ -1,5 +1,5 @@
 <!doctype html>
-{% load staticfiles i18n %}
+{% load static i18n %}
 <html class="no-js" lang="{{ LANGUAGE_CODE|default:"en-gb" }}">
 <head>
     <meta charset="utf-8" />
@@ -23,7 +23,7 @@
     <noscript class="capabilitymessage">
         {% blocktrans %}
             Javascript is required to use Wagtail, but it is currently disabled.<br />
-            Here are the <a href="http://www.enable-javascript.com/" target="_blank" rel="noopener">instructions how to enable JavaScript in your web browser</a>.
+            Here are the <a href="http://www.enable-javascript.com/" target="_blank" rel="noopener noreferrer">instructions how to enable JavaScript in your web browser</a>.
         {% endblocktrans %}
     </noscript>
 

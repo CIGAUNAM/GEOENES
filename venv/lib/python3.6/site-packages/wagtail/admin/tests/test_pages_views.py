@@ -2,8 +2,8 @@ import datetime
 import logging
 import os
 from itertools import chain
+from unittest import mock
 
-import mock
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
@@ -29,7 +29,7 @@ from wagtail.tests.testapp.models import (
     EVENT_AUDIENCE_CHOICES, Advert, AdvertPlacement, BusinessChild, BusinessIndex, BusinessSubIndex,
     DefaultStreamPage, EventCategory, EventPage, EventPageCarouselItem, FilePage,
     FormClassAdditionalFieldPage, ManyToManyBlogPage, SimplePage, SingleEventPage, SingletonPage,
-    StandardChild, StandardIndex, TaggedPage)
+    SingletonPageViaMaxCount, StandardChild, StandardIndex, TaggedPage)
 from wagtail.tests.utils import WagtailTestUtils
 from wagtail.users.models import UserProfile
 
@@ -663,6 +663,11 @@ class TestPageCreation(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<a href="#tab-content" class="active">Content</a>')
         self.assertContains(response, '<a href="#tab-promote" class="">Promote</a>')
+        # test register_page_action_menu_item hook
+        self.assertContains(response, '<input type="submit" name="action-panic" value="Panic!" class="button" />')
+        self.assertContains(response, 'testapp/js/siren.js')
+        # test construct_page_action_menu hook
+        self.assertContains(response, '<input type="submit" name="action-relax" value="Relax." class="button" />')
 
     def test_create_multipart(self):
         """
@@ -742,6 +747,9 @@ class TestPageCreation(TestCase, WagtailTestUtils):
         # SingletonPage overrides the can_create_at method to make it return
         # False if another SingletonPage already exists.
 
+        # The Page model now has a max_count attribute (issue 4841),
+        # but we are leaving this test in place to cover existing behaviour and
+        # ensure it does not break any code doing this in the wild.
         add_url = reverse('wagtailadmin_pages:add', args=[
             SingletonPage._meta.app_label, SingletonPage._meta.model_name, self.root_page.pk])
 
@@ -756,6 +764,30 @@ class TestPageCreation(TestCase, WagtailTestUtils):
 
         # A second singleton page should not be creatable
         self.assertFalse(SingletonPage.can_create_at(self.root_page))
+        response = self.client.get(add_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_cannot_create_singleton_page_with_max_count(self):
+        # Check that creating a second SingletonPageViaMaxCount results in a permission
+        # denied error.
+
+        # SingletonPageViaMaxCount uses the max_count attribute to limit the number of
+        # instance it can have.
+
+        add_url = reverse('wagtailadmin_pages:add', args=[
+            SingletonPageViaMaxCount._meta.app_label, SingletonPageViaMaxCount._meta.model_name, self.root_page.pk])
+
+        # A single singleton page should be creatable
+        self.assertTrue(SingletonPageViaMaxCount.can_create_at(self.root_page))
+        response = self.client.get(add_url)
+        self.assertEqual(response.status_code, 200)
+
+        # Create a singleton page
+        self.root_page.add_child(instance=SingletonPageViaMaxCount(
+            title='singleton', slug='singleton'))
+
+        # A second singleton page should not be creatable
+        self.assertFalse(SingletonPageViaMaxCount.can_create_at(self.root_page))
         response = self.client.get(add_url)
         self.assertEqual(response.status_code, 403)
 
@@ -1161,6 +1193,9 @@ class TestPageCreation(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
 
+        # page should not be created
+        self.assertFalse(Page.objects.filter(title="New page!").exists())
+
     def test_after_create_page_hook(self):
         def hook_func(request, page):
             self.assertIsInstance(request, HttpRequest)
@@ -1181,6 +1216,9 @@ class TestPageCreation(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
+
+        # page should be created
+        self.assertTrue(Page.objects.filter(title="New page!").exists())
 
 
 class TestPageEdit(TestCase, WagtailTestUtils):
@@ -1246,6 +1284,13 @@ class TestPageEdit(TestCase, WagtailTestUtils):
         # Test InlinePanel labels/headings
         self.assertContains(response, '<legend>Speaker lineup</legend>')
         self.assertContains(response, 'Add speakers')
+
+        # test register_page_action_menu_item hook
+        self.assertContains(response, '<input type="submit" name="action-panic" value="Panic!" class="button" />')
+        self.assertContains(response, 'testapp/js/siren.js')
+
+        # test construct_page_action_menu hook
+        self.assertContains(response, '<input type="submit" name="action-relax" value="Relax." class="button" />')
 
     def test_edit_draft_page_with_no_revisions(self):
         # Tests that the edit page loads
@@ -1912,8 +1957,8 @@ class TestPageEdit(TestCase, WagtailTestUtils):
 
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=(self.child_page.id, )))
 
-        link_to_draft = '<a href="/revised-slug-in-draft-only/" target="_blank" class="status-tag primary">live + draft</a>'
-        link_to_live = '<a href="/hello-world/" target="_blank" class="status-tag primary">live + draft</a>'
+        link_to_draft = '<a href="/revised-slug-in-draft-only/" target="_blank" rel="noopener noreferrer" class="status-tag primary">live + draft</a>'
+        link_to_live = '<a href="/hello-world/" target="_blank" rel="noopener noreferrer" class="status-tag primary">live + draft</a>'
         input_field_for_draft_slug = '<input type="text" name="slug" value="revised-slug-in-draft-only" id="id_slug" maxlength="255" required />'
         input_field_for_live_slug = '<input type="text" name="slug" value="hello-world" id="id_slug" maxlength="255" required />'
 
@@ -1935,8 +1980,8 @@ class TestPageEdit(TestCase, WagtailTestUtils):
 
         response = self.client.get(reverse('wagtailadmin_pages:edit', args=(self.single_event_page.id, )))
 
-        link_to_draft = '<a href="/revised-slug-in-draft-only/pointless-suffix/" target="_blank" class="status-tag primary">live + draft</a>'
-        link_to_live = '<a href="/mars-landing/pointless-suffix/" target="_blank" class="status-tag primary">live + draft</a>'
+        link_to_draft = '<a href="/revised-slug-in-draft-only/pointless-suffix/" target="_blank" rel="noopener noreferrer" class="status-tag primary">live + draft</a>'
+        link_to_live = '<a href="/mars-landing/pointless-suffix/" target="_blank" rel="noopener noreferrer" class="status-tag primary">live + draft</a>'
         input_field_for_draft_slug = '<input type="text" name="slug" value="revised-slug-in-draft-only" id="id_slug" maxlength="255" required />'
         input_field_for_live_slug = '<input type="text" name="slug" value="mars-landing" id="id_slug" maxlength="255" required />'
 
@@ -1982,6 +2027,9 @@ class TestPageEdit(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
 
+        # page should not be edited
+        self.assertEqual(Page.objects.get(id=self.child_page.id).title, "Hello world!")
+
     def test_after_edit_page_hook(self):
         def hook_func(request, page):
             self.assertIsInstance(request, HttpRequest)
@@ -2002,6 +2050,9 @@ class TestPageEdit(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
+
+        # page should be edited
+        self.assertEqual(Page.objects.get(id=self.child_page.id).title, "I've been edited!")
 
 
 class TestPageEditReordering(TestCase, WagtailTestUtils):
@@ -2295,6 +2346,9 @@ class TestPageDelete(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
 
+        # page should not be deleted
+        self.assertTrue(Page.objects.filter(id=self.child_page.id).exists())
+
     def test_after_delete_page_hook(self):
         def hook_func(request, page):
             self.assertIsInstance(request, HttpRequest)
@@ -2307,6 +2361,9 @@ class TestPageDelete(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
+
+        # page should be deleted
+        self.assertFalse(Page.objects.filter(id=self.child_page.id).exists())
 
 
 class TestPageSearch(TestCase, WagtailTestUtils):
@@ -2523,6 +2580,59 @@ class TestPageMove(TestCase, WagtailTestUtils):
     def test_page_set_page_position(self):
         response = self.client.get(reverse('wagtailadmin_pages:set_page_position', args=(self.test_page.id, )))
         self.assertEqual(response.status_code, 200)
+
+    def test_before_move_page_hook(self):
+        def hook_func(request, page, destination):
+            self.assertIsInstance(request, HttpRequest)
+            self.assertIsInstance(page.specific, SimplePage)
+            self.assertIsInstance(destination.specific, SimplePage)
+
+            return HttpResponse("Overridden!")
+
+        with self.register_hook('before_move_page', hook_func):
+            response = self.client.get(reverse('wagtailadmin_pages:move_confirm', args=(self.test_page.id, self.section_b.id)))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"Overridden!")
+
+    def test_before_move_page_hook_post(self):
+        def hook_func(request, page, destination):
+            self.assertIsInstance(request, HttpRequest)
+            self.assertIsInstance(page.specific, SimplePage)
+            self.assertIsInstance(destination.specific, SimplePage)
+
+            return HttpResponse("Overridden!")
+
+        with self.register_hook('before_move_page', hook_func):
+            response = self.client.post(reverse('wagtailadmin_pages:move_confirm', args=(self.test_page.id, self.section_b.id)))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"Overridden!")
+
+        # page should not be moved
+        self.assertEqual(
+            Page.objects.get(id=self.test_page.id).get_parent().id,
+            self.section_a.id
+        )
+
+    def test_after_move_page_hook(self):
+        def hook_func(request, page):
+            self.assertIsInstance(request, HttpRequest)
+            self.assertIsInstance(page.specific, SimplePage)
+
+            return HttpResponse("Overridden!")
+
+        with self.register_hook('after_move_page', hook_func):
+            response = self.client.post(reverse('wagtailadmin_pages:move_confirm', args=(self.test_page.id, self.section_b.id)))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"Overridden!")
+
+        # page should be moved
+        self.assertEqual(
+            Page.objects.get(id=self.test_page.id).get_parent().id,
+            self.section_b.id
+        )
 
 
 class TestPageCopy(TestCase, WagtailTestUtils):
@@ -2930,6 +3040,9 @@ class TestPageCopy(TestCase, WagtailTestUtils):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
 
+        # page should not be copied
+        self.assertFalse(Page.objects.filter(title="Hello world 2").exists())
+
     def test_after_copy_page_hook(self):
         def hook_func(request, page, new_page):
             self.assertIsInstance(request, HttpRequest)
@@ -2950,6 +3063,9 @@ class TestPageCopy(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b"Overridden!")
+
+        # page should be copied
+        self.assertTrue(Page.objects.filter(title="Hello world 2").exists())
 
 
 class TestPageUnpublish(TestCase, WagtailTestUtils):

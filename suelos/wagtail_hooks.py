@@ -71,7 +71,7 @@ class ColorMapAdmin(ModelAdmin):
     model = ColorMap
     menu_label = 'Mapas de color'  # ditch this to use verbose_name_plural from model
     menu_icon = 'doc-full-inverse'  # change as required
-    list_display = ('colormap_nombre', 'colormap_paleta')
+    list_display = ('colormap_nombre', 'colormap_paleta', 'colormap_continuous', 'colormap_discrete')
     list_filter = ('colormap_nombre', 'colormap_paleta')
     search_fields = ('colormap_nombre', 'colormap_paleta')
 

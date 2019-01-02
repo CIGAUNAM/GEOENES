@@ -52,6 +52,8 @@ def get_chooser_context(request):
     collections = Collection.objects.all()
     if len(collections) < 2:
         collections = None
+    else:
+        collections = Collection.order_for_display(collections)
 
     return {
         'searchform': SearchForm(),
@@ -79,8 +81,8 @@ def chooser(request):
         images = hook(images, request)
 
     if (
-        'q' in request.GET or 'p' in request.GET or 'tag' in request.GET or
-        'collection_id' in request.GET
+        'q' in request.GET or 'p' in request.GET or 'tag' in request.GET
+        or 'collection_id' in request.GET
     ):
         # this request is triggered from search, pagination or 'popular tags';
         # we will just render the results.html fragment

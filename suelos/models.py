@@ -66,7 +66,7 @@ class PaletaColor(models.Model):
 
 
 class ColorMap(models.Model):
-    colormap_nombre = models.CharField(max_length=100)
+    colormap_nombre = models.CharField(max_length=100, unique=True)
     colormap_paleta = models.ForeignKey(PaletaColor, on_delete=models.PROTECT)
     colormap_importstring = models.CharField(max_length=190)
     colormap_continuous = models.ImageField(null=True, blank=True)
@@ -75,8 +75,6 @@ class ColorMap(models.Model):
     def __str__(self):
         return "{} - {}".format(self.colormap_paleta, self.colormap_nombre)
 
-    class Meta:
-        unique_together = ['colormap_nombre', 'colormap_paleta']
 
 class SuelosIndexPage(Page):
     body = RichTextField(blank=True)

@@ -18,10 +18,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     {# Global stylesheets #}
+    <link rel="stylesheet" type="text/css" href="{% static 'jquery-ui-1.12.1/jquery-ui.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/GEOENES.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'leaflet/leaflet.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'leaflet/Control.MiniMap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/fontawesome.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'select2/css/select2.css' %}">
 
@@ -30,20 +30,21 @@
     {% endblock %}
 </head>
 
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}" style="margin-top: 0px;margin-bottom: 0px;margin-right: 0px;margin-left: 0px;">
 {% wagtailuserbar %}
 
 {% block content %}{% endblock %}
 
 {# Global javascript #}
 <script type="text/javascript" src="{% static 'js/jquery-3.3.1.js' %}"></script>
-<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'jquery-ui-1.12.1/jquery-ui.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/GEOENES.js' %}"></script>
 <script type="text/javascript" src="{% static 'leaflet/leaflet.js' %}"></script>
-<script type="text/javascript" src="{% static 'leaflet/leaflet-hash.js' %}"></script>
 <script type="text/javascript" src="{% static 'leaflet/Control.MiniMap.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'leaflet/L.TileLayer.BetterWMS.js' %}"></script>
+<script type="text/javascript" src="{% static 'leaflet/leaflet-hash.js' %}"></script>
 <script type="text/javascript" src="{% static 'leaflet/L.Control.Custom.js' %}"></script>
+
 <script type="text/javascript" src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
 <script type="text/javascript" src="{% static 'select2/js/select2.js' %}"></script>
 

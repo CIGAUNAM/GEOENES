@@ -10,6 +10,12 @@
 
     .inner {
         background: $nav-grey-1;
+
+        @include media-breakpoint-up(sm) {
+            // On medium, make it possible for the nav links to scroll.
+            display: flex;
+            flex-flow: column nowrap;
+        }
     }
 }
 
@@ -117,7 +123,7 @@
 }
 
 .submenu-trigger:after {
-    @include medium {
+    @include media-breakpoint-up(sm) {
         // The menus are collapsible on desktop only.
         content: map-get($icons, arrow-right);
         width: auto;
@@ -162,8 +168,10 @@
 
 .nav-search {
     position: relative;
-    padding: 0;
-    margin: 0 1em 1em;
+    padding: 0 1em 1em;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
 
     label {
         @include visuallyhidden();
@@ -203,13 +211,10 @@
         background-color: transparent;
         position: absolute;
         top: 0;
-        right: 0;
+        right: 1em;
         bottom: 0;
-        margin: auto;
         padding: 0;
         width: 3em;
-        height: 100%;
-        overflow: hidden;
 
         &:hover {
             background-color: $nav-item-hover-bg;
@@ -263,7 +268,7 @@ body.explorer-open {
     }
 }
 
-@media screen and (min-width: $breakpoint-mobile) {
+@include media-breakpoint-up(sm) {
     .wrapper,
     body.nav-open .wrapper {
         transform: none;
@@ -290,28 +295,32 @@ body.explorer-open {
     }
 
     .nav-main {
-        position: absolute;
-        top: 175px; // WARNING - magic number - the height of the logo plus search box
-        bottom: 0;
-        margin-bottom: 127px; // WARNING - magic number - the height of the .footer
-        width: 100%;
+        $footer-closed-height: 50px;
+        $footer-submenu-height: 77px;
+        $footer-open-height: $footer-closed-height + $footer-submenu-height;
         overflow: auto;
+        margin-bottom: $footer-closed-height;
+        @include transition(margin-bottom 0.2s ease);
 
         .footer {
             position: fixed;
             width: $menu-width;
             bottom: 0;
-        }
-
-        .footer-open .footer-submenu {
-            max-height: 127px; // WARNING - magic number - the height of the .footer
+            background-color: $footer-submenu;
         }
 
         .footer-submenu {
             @include transition(max-height 0.2s ease);
-            background-color: $footer-submenu;
             overflow: hidden;
             max-height: 0;
+        }
+
+        &--open-footer {
+            margin-bottom: $footer-open-height;
+
+            .footer-submenu {
+                max-height: $footer-submenu-height;
+            }
         }
 
         .account {
@@ -484,8 +493,8 @@ body.explorer-open {
     }
 }
 
-@media all and (min-width: $breakpoint-mobile) and (-ms-high-contrast: none),
-    all and (min-width: $breakpoint-mobile) and (-ms-high-contrast: active) {
+@media all and (min-width: breakpoint-min(sm)) and (-ms-high-contrast: none),
+    all and (min-width: breakpoint-min(sm)) and (-ms-high-contrast: active) {
     body.explorer-open {
         .wrapper {
             left: 0;

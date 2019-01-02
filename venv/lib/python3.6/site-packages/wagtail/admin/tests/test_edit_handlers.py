@@ -1,6 +1,6 @@
 from datetime import date
+from unittest import mock
 
-import mock
 from django import forms
 from django.contrib.auth.models import AnonymousUser
 from django.core import checks
@@ -674,7 +674,7 @@ class TestPageChooserPanel(TestCase):
         self.assertIn('<p class="help">help text</p>', result)
         self.assertIn('<span class="title">Christmas</span>', result)
         self.assertIn(
-            '<a href="/admin/pages/%d/edit/" class="edit-link button button-small button-secondary" target="_blank">'
+            '<a href="/admin/pages/%d/edit/" class="edit-link button button-small button-secondary" target="_blank" rel="noopener noreferrer">'
             'Edit this page</a>' % self.christmas_page.id,
             result)
 

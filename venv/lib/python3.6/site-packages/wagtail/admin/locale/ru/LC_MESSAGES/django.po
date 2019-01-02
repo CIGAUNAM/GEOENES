@@ -18,12 +18,14 @@
 # Nikita Tonkoshkur <humapen@gmail.com>, 2018
 # Sergey Komarov <sjkomarov@gmail.com>, 2014
 # Sergey Khalymon <sergiykhalimon@gmail.com>, 2015
+# Tatsiana Tsygan <art.tatsiana@gmail.com>, 2018
+# Мирон Левицкий <miron200504@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: Wagtail\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-11 14:09+0100\n"
-"PO-Revision-Date: 2018-10-11 13:13+0000\n"
+"POT-Creation-Date: 2018-12-06 16:40+0000\n"
+"PO-Revision-Date: 2018-12-06 16:41+0000\n"
 "Last-Translator: Matt Westcott <matthew@torchbox.com>\n"
 "Language-Team: Russian (http://www.transifex.com/torchbox/wagtail/language/"
 "ru/)\n"
@@ -34,6 +36,18 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgid "Submit for moderation"
+msgstr "Отправить на модерацию"
+
+msgid "Unpublish"
+msgstr "Отменить публикацию"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Wagtail admin"
+msgstr "Wagtail админ"
 
 msgid "None"
 msgstr "Ничего"
@@ -182,8 +196,17 @@ msgstr "Идти в админ-панель Wagtail"
 msgid "Account"
 msgstr "Аккаунт"
 
+msgid "Change profile picture"
+msgstr "Выбрать фотографию профиля"
+
+msgid "Your current profile picture:"
+msgstr "Ваша текущая картинка профиля:"
+
 msgid "Update"
 msgstr "Обновить"
+
+msgid "Change email"
+msgstr "Выбрать email"
 
 msgid "Change password"
 msgstr "Изменить пароль"
@@ -224,6 +247,9 @@ msgid ""
 msgstr ""
 "Ссылка для сброса пароля не работает, возможно её уже использовали ранее."
 
+msgid "Request a new password reset"
+msgstr "Запросить новый пароль"
+
 msgid "Check your email"
 msgstr "Проверьте вашу электронную почту"
 
@@ -241,9 +267,6 @@ msgstr "Сбросить ваш пароль"
 
 msgid "Edit"
 msgstr "Редактировать"
-
-msgid "Delete"
-msgstr "Удалить"
 
 msgid "Page"
 msgstr "Страница"
@@ -278,8 +301,23 @@ msgstr "Введите текст..."
 msgid "Horizontal line"
 msgstr "Горизонтальная линия"
 
+msgid "Line break"
+msgstr "Разрыв строки"
+
 msgid "Undo"
 msgstr "Отменить дейсвие"
+
+msgid "Reload the page"
+msgstr "Перезагрузить страницу"
+
+msgid "Reload saved content"
+msgstr "Перезагрузка сохраненного контента"
+
+msgid "Show latest content"
+msgstr "Показать последнее содержание"
+
+msgid "Show error"
+msgstr "Показать ошибку"
 
 msgid "Dashboard"
 msgstr "Панель управления"
@@ -307,28 +345,6 @@ msgstr "Внешняя ссылка"
 
 msgid "Email link"
 msgstr "Ссылка адреса электронной почты"
-
-#, python-format
-msgid ""
-"\n"
-"        There is one match\n"
-"    "
-msgid_plural ""
-"\n"
-"        There are %(counter)s matches\n"
-"    "
-msgstr[0] ""
-"\n"
-"Есть одно совпадение"
-msgstr[1] ""
-"\n"
-"Есть %(counter)s совпадений"
-msgstr[2] ""
-"\n"
-"Есть %(counter)s совпадений"
-msgstr[3] ""
-"\n"
-"Есть %(counter)s совпадений"
 
 msgid "Choose"
 msgstr "Выбрать"
@@ -415,6 +431,10 @@ msgid ""
 msgstr ""
 "Коллекции еще не были созданы. Почему бы не <a href=\"%(add_collection_url)s"
 "\">добавить одну</a>?"
+
+#, python-format
+msgid "Add %(label)s"
+msgstr "Добавить %(label)s"
 
 msgid "Yes, delete"
 msgstr "Да, удалить"
@@ -518,6 +538,9 @@ msgstr "Войти в Wagtail"
 msgid "Forgotten it?"
 msgstr "Забыли его?"
 
+msgid "Signing in…"
+msgstr "Выполняется вход..."
+
 #, python-format
 msgid "The page \"%(title)s\" has been approved."
 msgstr "Страница \"%(title)s\" была утверждена."
@@ -576,6 +599,15 @@ msgstr "Заблокировано"
 
 msgid "Unlocked"
 msgstr "Разблокировано"
+
+msgid "Publishing…"
+msgstr "Публикуется..."
+
+msgid "Publish this revision"
+msgstr "Опубликовать эту версию"
+
+msgid "Publish"
+msgstr "Опубликовать"
 
 #, python-format
 msgid "Create a page in %(title)s"
@@ -663,9 +695,6 @@ msgstr "Да, переместить эту страницу"
 msgid "Unpublish %(title)s"
 msgstr "Отменить публикацию %(title)s"
 
-msgid "Unpublish"
-msgstr "Отменить публикацию"
-
 msgid "Are you sure you want to unpublish this page?"
 msgstr "Вы уверены, что хотите отменить публикацию этой страницы?"
 
@@ -731,12 +760,6 @@ msgstr "Сохранение…"
 msgid "Save draft"
 msgstr "Сохранить черновик"
 
-msgid "Publish"
-msgstr "Опубликовать"
-
-msgid "Submit for moderation"
-msgstr "Отправить на модерацию"
-
 msgid "This page has unsaved changes."
 msgstr "На странице есть несохраненные изменения."
 
@@ -753,9 +776,6 @@ msgstr "Страница заблокирована"
 
 msgid "Replace current draft"
 msgstr "Изменить черновик"
-
-msgid "Publish this revision"
-msgstr "Опубликовать эту версию"
 
 #, python-format
 msgid "Last modified: %(last_mod)s"
@@ -1011,6 +1031,15 @@ msgstr[3] ""
 msgid "There are no differences between these two revisions"
 msgstr "Сравниваемые версии идентичны"
 
+msgid "Unschedule"
+msgstr "Отменить временную публикацию"
+
+msgid "Yes, unschedule"
+msgstr "Да, отменить временную публикацию"
+
+msgid "No, don't unschedule"
+msgstr "Нет, не отменять публикацию по расписанию"
+
 #, python-format
 msgid "Revisions of %(title)s"
 msgstr "Версии %(title)s"
@@ -1125,6 +1154,27 @@ msgstr "Ноябрь"
 msgid "December"
 msgstr "Декабрь"
 
+msgid "Sunday"
+msgstr "Воскрксенье"
+
+msgid "Monday"
+msgstr "Понедельник"
+
+msgid "Tuesday"
+msgstr "Вторник"
+
+msgid "Wednesday"
+msgstr "Среда"
+
+msgid "Thursday"
+msgstr "Четверг"
+
+msgid "Friday"
+msgstr "Пятница"
+
+msgid "Saturday"
+msgstr "Суббота"
+
 msgid "Sun"
 msgstr "Вс"
 
@@ -1170,22 +1220,6 @@ msgstr ""
 "Вы используете <strong>устаревший</strong> браузер не поддерживаемый этим "
 "сайтом. Пожалуйста, <a href=\"http://browsehappy.com/\">обновите ваш "
 "браузер</a>."
-
-msgid ""
-"\n"
-"            Javascript is required to use Wagtail, but it is currently "
-"disabled.<br />\n"
-"            Here are the <a href=\"http://www.enable-javascript.com/\" "
-"target=\"_blank\" rel=\"noopener\">instructions how to enable JavaScript in "
-"your web browser</a>.\n"
-"        "
-msgstr ""
-"\n"
-"JavaScript необходим для использования Wagtail, но в данный момент он "
-"отключен.<br />\n"
-"Тут вы можете найти <a href=\"http://www.enable-javascript.com/ru/\" target="
-"\"_blank\" rel=\"noopener\">инструкцию как включить JavaScript в вашем "
-"браузере</a>."
 
 msgid "Go to Wagtail admin interface"
 msgstr "Идти в интерфейс управления Wagtail"
@@ -1262,6 +1296,12 @@ msgstr "Русский"
 msgid "Swedish"
 msgstr "Шведский"
 
+msgid "Slovak"
+msgstr "Словацкий язык"
+
+msgid "Ukrainian"
+msgstr "Украинский язык"
+
 msgid "Chinese (China)"
 msgstr "Китайский (упрощенный)"
 
@@ -1270,6 +1310,9 @@ msgstr "Извините, но у вас нет доступа в эту обл�
 
 msgid "Your password has been changed successfully!"
 msgstr "Ваш пароль был успешно изменен!"
+
+msgid "Your email has been changed successfully!"
+msgstr "Ваш email успешно поменялся"
 
 msgid "Your preferences have been updated."
 msgstr "Ваши настройки были обновлены."
@@ -1447,6 +1490,12 @@ msgstr "Отменить публикацию страницы '{title}'"
 msgid "View revision history for '{title}'"
 msgstr "Показать историю версий для '{title}'"
 
+msgid "Set profile picture"
+msgstr "Установить фото профиля"
+
+msgid "Change your profile picture"
+msgstr "Выберите свою фотографию профиля"
+
 msgid "Change the password you use to log in."
 msgstr "Изменить пароль, который вы используете для входа."
 
@@ -1458,6 +1507,9 @@ msgstr "Языковые настройки"
 
 msgid "Choose the language you want to use here."
 msgstr "Выберите язык, который вы хотите использовать."
+
+msgid "Link"
+msgstr "Ссылка"
 
 msgid "Choose an item"
 msgstr "Выбрать элемент"

@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.views.generic import View
 from . models import *
+from . forms import *
 # Create your views here.
 
 class SuelosIndex(View):
     template_name = 'suelos/suelos_index.html'
-    context = {'self': {'title': 'Suelos de México'}}
+    # form_class = SueloForm
+    context = {'self': {'title': 'Suelos de México'}, 'form': SueloForm}
 
     def get(self, request):
         return render(request, self.template_name, self.context)

@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 from django.core.handlers.base import BaseHandler
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import models, transaction
-from django.db.models import Q, Value
+from django.db.models import Case, Q, Value, When
 from django.db.models.functions import Concat, Substr
 from django.http import Http404
 from django.template.response import TemplateResponse
@@ -81,14 +81,14 @@ class Site(models.Model):
     def __str__(self):
         if self.site_name:
             return(
-                self.site_name +
-                (" [default]" if self.is_default_site else "")
+                self.site_name
+                + (" [default]" if self.is_default_site else "")
             )
         else:
             return(
-                self.hostname +
-                ("" if self.port == 80 else (":%d" % self.port)) +
-                (" [default]" if self.is_default_site else "")
+                self.hostname
+                + ("" if self.port == 80 else (":%d" % self.port))
+                + (" [default]" if self.is_default_site else "")
             )
 
     @staticmethod
@@ -346,6 +346,9 @@ class Page(AbstractPage, index.Indexed, ClusterableModel, metaclass=PageBase):
 
     # Do not allow plain Page instances to be created through the Wagtail admin
     is_creatable = False
+
+    # Define the maximum number of instances this page type can have. Default to unlimited.
+    max_count = None
 
     # An array of additional field names that will not be included when a Page is copied.
     exclude_fields_in_copy = []
@@ -979,7 +982,12 @@ class Page(AbstractPage, index.Indexed, ClusterableModel, metaclass=PageBase):
         Checks if this page type can be created as a subpage under a parent
         page instance.
         """
-        return cls.is_creatable and cls.can_exist_under(parent)
+        can_create = cls.is_creatable and cls.can_exist_under(parent)
+
+        if cls.max_count is not None:
+            can_create = can_create and cls.objects.count() < cls.max_count
+
+        return can_create
 
     def can_move_to(self, parent):
         """
@@ -1261,19 +1269,9 @@ class Page(AbstractPage, index.Indexed, ClusterableModel, metaclass=PageBase):
         request.is_dummy = True
 
         # Apply middleware to the request
-        # Note that Django makes sure only one of the middleware settings are
-        # used in a project
-        if hasattr(settings, 'MIDDLEWARE'):
-            handler = BaseHandler()
-            handler.load_middleware()
-            handler._middleware_chain(request)
-        elif hasattr(settings, 'MIDDLEWARE_CLASSES'):
-            # Pre Django 1.10 style - see http://www.mellowmorning.com/2011/04/18/mock-django-request-for-testing/
-            handler = BaseHandler()
-            handler.load_middleware()
-            # call each middleware in turn and throw away any responses that they might return
-            for middleware_method in handler._request_middleware:
-                middleware_method(request)
+        handler = BaseHandler()
+        handler.load_middleware()
+        handler._middleware_chain(request)
 
         return request
 
@@ -1696,9 +1694,9 @@ class PagePermissionTester:
         if self.page_is_root:  # root node is not a page and can never be edited, even by superusers
             return False
         return (
-            self.user.is_superuser or
-            ('edit' in self.permissions) or
-            ('add' in self.permissions and self.page.owner_id == self.user.pk)
+            self.user.is_superuser
+            or ('edit' in self.permissions)
+            or ('add' in self.permissions and self.page.owner_id == self.user.pk)
         )
 
     def can_delete(self):
@@ -1984,6 +1982,14 @@ class Collection(MP_Node):
         """Return a query set of all collection view restrictions that apply to this collection"""
         return CollectionViewRestriction.objects.filter(collection__in=self.get_ancestors(inclusive=True))
 
+    @staticmethod
+    def order_for_display(queryset):
+        return queryset.annotate(
+            display_order=Case(
+                When(depth=1, then=Value('')),
+                default='name')
+        ).order_by('display_order')
+
     class Meta:
         verbose_name = _('collection')
         verbose_name_plural = _('collections')
@@ -2046,3 +2052,4 @@ class GroupCollectionPermission(models.Model):
     class Meta:
         unique_together = ('group', 'collection', 'permission')
         verbose_name = _('group collection permission')
+        verbose_name_plural = _('group collection permissions')

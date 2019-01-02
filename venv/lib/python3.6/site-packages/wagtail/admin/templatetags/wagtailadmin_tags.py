@@ -5,9 +5,9 @@ from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.messages.constants import DEFAULT_TAGS as MESSAGE_TAGS
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.template.defaultfilters import stringfilter
 from django.template.loader import render_to_string
+from django.templatetags.static import static
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
@@ -113,6 +113,15 @@ def widgettype(bound_field):
             return ""
 
 
+def _get_user_page_permissions(context):
+    # Create a UserPagePermissionsProxy object to represent the user's global permissions, and
+    # cache it in the context for the duration of the page request, if one does not exist already
+    if 'user_page_permissions' not in context:
+        context['user_page_permissions'] = UserPagePermissionsProxy(context['request'].user)
+
+    return context['user_page_permissions']
+
+
 @register.simple_tag(takes_context=True)
 def page_permissions(context, page):
     """
@@ -120,13 +129,7 @@ def page_permissions(context, page):
     Sets the variable 'page_perms' to a PagePermissionTester object that can be queried to find out
     what actions the current logged-in user can perform on the given page.
     """
-    # Create a UserPagePermissionsProxy object to represent the user's global permissions, and
-    # cache it in the context for the duration of the page request, if one does not exist already
-    if 'user_page_permissions' not in context:
-        context['user_page_permissions'] = UserPagePermissionsProxy(context['request'].user)
-
-    # Now retrieve a PagePermissionTester from it, specific to the given page
-    return context['user_page_permissions'].for_page(page)
+    return _get_user_page_permissions(context).for_page(page)
 
 
 @register.simple_tag(takes_context=True)

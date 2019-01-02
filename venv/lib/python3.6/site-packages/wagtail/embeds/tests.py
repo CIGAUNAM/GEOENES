@@ -1,6 +1,7 @@
 import json
 import unittest
 import urllib.request
+from unittest.mock import patch
 from urllib.error import URLError
 
 from bs4 import BeautifulSoup
@@ -8,7 +9,6 @@ from django import template
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from mock import patch
 
 from wagtail.core import blocks
 from wagtail.core.rich_text import expand_db_html
@@ -518,7 +518,10 @@ class TestEmbedBlock(TestCase):
         self.assertIsInstance(block5.get_default(), EmbedValue)
         self.assertEqual(block5.get_default().url, 'http://www.example.com/foo')
 
-    def test_clean_required(self):
+    @patch('wagtail.embeds.embeds.get_embed')
+    def test_clean_required(self, get_embed):
+        get_embed.return_value = Embed(html='<h1>Hello world!</h1>')
+
         block = EmbedBlock()
 
         cleaned_value = block.clean(
@@ -530,7 +533,10 @@ class TestEmbedBlock(TestCase):
         with self.assertRaisesMessage(ValidationError, ''):
             block.clean(None)
 
-    def test_clean_non_required(self):
+    @patch('wagtail.embeds.embeds.get_embed')
+    def test_clean_non_required(self, get_embed):
+        get_embed.return_value = Embed(html='<h1>Hello world!</h1>')
+
         block = EmbedBlock(required=False)
 
         cleaned_value = block.clean(
@@ -542,7 +548,10 @@ class TestEmbedBlock(TestCase):
         cleaned_value = block.clean(None)
         self.assertIsNone(cleaned_value)
 
-    def test_clean_invalid_url(self):
+    @patch('wagtail.embeds.embeds.get_embed')
+    def test_clean_invalid_url(self, get_embed):
+        get_embed.side_effect = EmbedNotFoundException
+
         non_required_block = EmbedBlock(required=False)
 
         with self.assertRaises(ValidationError):
