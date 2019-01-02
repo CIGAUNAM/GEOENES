@@ -49,23 +49,7 @@ $(function () {
 
     satelite.addTo(map);
 
-    var suelos = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
-        layers: 'ENES:suelos_suelo',
-        tiled: true,
-        format: 'image/png',
-        transparent: true,
-        minZoom: 5,
-        maxZoom: 22,
-    }).addTo(map);
-
-    var suelos2 = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
-        layers: 'ENES:suelos_suelo',
-        tiled: true,
-        format: 'image/png',
-        transparent: true,
-        minZoom: 5,
-        maxZoom: 22,
-    })
+    $("#tabs").tabs();
 
     function makeLayerWMS() {
         newlayer = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
@@ -85,10 +69,7 @@ $(function () {
         "Calles (Google)": calles
     };
 
-    var overlays = {
-        //"Suelos <a href=\"#\" onclick=\"alert(); alert(2);\">je</a>": suelos,
-        "Suelos": suelos,
-    };
+    var overlays = {};
 
     L.control.custom({
         position: 'topright',
@@ -104,11 +85,73 @@ $(function () {
 
     tips = $(".validateTips");
 
+    function filtro() {
+        cql = "";
+        entidades = $("#id_entidad").val();
+        municipios = $("#id_municipio").val();
+        clases_roca = $("#id_clase_roca").val();
+        tipos_roca = $("#id_tipo_roca").val();
+        tipos_suelo = $("#id_tipo_suelo").val();
+        usos_suelo = $("#id_uso_suelo").val();
+
+        if (entidades.length > 0) {
+            esp = "AND entidad IN ('";
+            esp += entidades.join("', '");
+            esp += "') ";
+            cql += esp;
+        }
+
+        if (municipios.length > 0) {
+            mun = "AND municipio IN ('";
+            mun += municipios.join("', '");
+            mun += "') ";
+            cql += mun;
+        }
+
+        if (clases_roca.length > 0) {
+            croca = "AND clase_roca IN ('";
+            croca += clases_roca.join("', '");
+            croca += "') ";
+            cql += croca;
+        }
+
+        if (tipos_roca.length > 0) {
+            troca = "AND tipo_roca IN ('";
+            troca += tipos_roca.join("', '");
+            troca += "') ";
+            cql += troca;
+        }
+
+        if (tipos_suelo.length > 0) {
+            tsuelo = "AND tipo_suelo IN ('";
+            tsuelo += tipos_suelo.join("', '");
+            tsuelo += "') ";
+            cql += tsuelo;
+        }
+
+        if (usos_suelo.length > 0) {
+            usuelo = "AND uso_suelo IN ('";
+            usuelo += usos_suelo.join("', '");
+            usuelo += "') ";
+            cql += usuelo;
+        }
+
+        scql = cql.substr(0, 4);
+
+        if (scql == 'AND ') {
+            cql = cql.substr(4)
+        }
+        alert(cql);
+
+        return cql;
+
+    }
+
     function checkLength(o, n, min, max) {
         if (o.val().length > max || o.val().length < min) {
             o.addClass("ui-state-error");
-            updateTips("Length of " + n + " must be between " +
-                min + " and " + max + ".");
+            updateTips("La longitud de " + n + " debe estar entre " +
+                min + " y " + max + " caracteres.");
             return false;
         } else {
             return true;
@@ -132,13 +175,28 @@ $(function () {
         if (valid) {
             console.log("valid");
             console.log($("#nombre").val())
-            overlays[$("#nombre").val()] = suelos2
-            suelos2.addTo(map)
+            overlays[$("#nombre").val()] = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
+                layers: 'ENES:suelos_suelo',
+                tiled: true,
+                format: 'image/png',
+                transparent: true,
+                minZoom: 5,
+                maxZoom: 22,
+            });
+
+            cql = filtro()
+
+            overlays[$("#nombre").val()].setParams({cql_filter: cql});
+            overlays[$("#nombre").val()].addTo(map)
+
             controles.remove(map)
-            //controles.addTo(map);
+            controles = L.control.layers(baseLayers, overlays);
+
+            controles.addTo(map);
 
 
             console.log(overlays)
+            console.log(cql);
             newlayerdialog.dialog("close");
 
         }
@@ -158,13 +216,17 @@ $(function () {
         close:
 
             function () {
-                $("#layerform")[0].reset()
+                $("#newlayerform")[0].reset();
+                $("#newlayeradvaced")[0].reset();
+                $("#newlayerstyle")[0].reset();
                 $("#id_entidad").val(null).trigger('change');
                 $("#id_municipio").val(null).trigger('change');
                 $("#id_clase_roca").val(null).trigger('change');
                 $("#id_tipo_roca").val(null).trigger('change');
                 $("#id_tipo_suelo").val(null).trigger('change');
                 $("#id_uso_suelo").val(null).trigger('change');
+                $("#newtextadvanced").val(null).trigger('change');
+                $("#newtextadvanced").val(null).trigger('change');
             }
     });
 

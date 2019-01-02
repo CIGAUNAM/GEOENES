@@ -73,7 +73,7 @@ class ColorMap(models.Model):
     colormap_discrete = models.ImageField(null=True, blank=True)
 
     def __str__(self):
-        return "{} - {}".format(self.colormap_paleta, self.colormap_nombre)
+        return "{} - {}".format(self.colormap_paleta, self.colormap_nombre )
 
 
 class SuelosIndexPage(Page):

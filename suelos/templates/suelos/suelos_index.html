@@ -17,64 +17,99 @@
 
     <div id="main" style="position: relative; overflow: hidden;" class="leaflet-container-default"></div>
 
+
+
     <div id="dialog-newlayer" title="Agregar capa nueva">
-        <div class="widget3">
-            <p>Utilice los filtros deseados de acuerdo a lo que quiera representar</p>
-            <p class="validateTips"></p>
 
-            <form id="layerform">
-                <fieldset>
-                    <legend>Nombre de capa</legend>
-                    <div>
-                        <input type="text" class="form-control pull-right" style="width: 98%" name="nombre" id="nombre"
-                               required class="text ui-widget-content ui-corner-all">
-                    </div>
-                </fieldset>
 
-                <fieldset>
-                    <legend>Entidades</legend>
-                    <div>
-                        {{ form.entidad }}
-                    </div>
-                </fieldset>
+        <div class="widget">
 
-                <fieldset>
-                    <legend>Municipios</legend>
-                    <div>
-                        {{ form.municipio }}
-                    </div>
-                </fieldset>
+            <div id="tabs">
+                <ul>
+                    <li><a href="#tabs-1">Básico</a></li>
+                    <li><a href="#tabs-2">Estilos</a></li>
+                    <li><a href="#tabs-3">Avanzado</a></li>
+                </ul>
+                <div id="tabs-1">
 
-                <fieldset>
-                    <legend>Clases de roca</legend>
-                    <div>
-                        {{ form.clase_roca }}
-                    </div>
-                </fieldset>
+                    <p>Seleccione los atributos que se quieran filtrar. La combinación de varios campos utiliza el operador lógico AND entre todos ellos. Para una selección más fina, utilizar mejor la pestaña "Avanzado"</p>
+                    <p class="validateTips"></p>
 
-                <fieldset>
-                    <legend>Tipo de roca</legend>
-                    <div>
-                        {{ form.tipo_roca }}
-                    </div>
-                </fieldset>
+                    <form id="newlayerform">
+                        <fieldset>
+                            <legend>Nombre de capa</legend>
+                            <div>
+                                <input type="text" class="form-control pull-right" style="width: 98%" name="nombre"
+                                       id="nombre"
+                                       required class="text ui-widget-content ui-corner-all">
+                            </div>
+                        </fieldset>
 
-                <fieldset>
-                    <legend>Tipo de suelo</legend>
-                    <div>
-                        {{ form.tipo_suelo }}
-                    </div>
-                </fieldset>
+                        <fieldset>
+                            <legend>Entidades</legend>
+                            <div>
+                                {{ form.entidad }}
+                            </div>
+                        </fieldset>
 
-                <fieldset>
-                    <legend>Uso de suelo</legend>
-                    <div>
-                        {{ form.uso_suelo }}
-                    </div>
-                </fieldset>
-            </form>
+                        <fieldset>
+                            <legend>Municipios</legend>
+                            <div>
+                                {{ form.municipio }}
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Clases de roca</legend>
+                            <div>
+                                {{ form.clase_roca }}
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Tipo de roca</legend>
+                            <div>
+                                {{ form.tipo_roca }}
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Tipo de suelo</legend>
+                            <div>
+                                {{ form.tipo_suelo }}
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Uso de suelo</legend>
+                            <div>
+                                {{ form.uso_suelo }}
+                            </div>
+                        </fieldset>
+                    </form>
+
+                </div>
+                <div id="tabs-2">
+                    <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus
+                        i.</p>
+                    <form id="newlayerstyle">
+                        {{ colormap_form.as_p }}
+
+                    </form>
+                </div>
+                <div id="tabs-3">
+                    <form id="newlayeradvaced">
+                        <p>Introduzca el código de consulta de acuerdo <a href="http://www.loc.gov/standards/sru/cql/">al</a> <a href="http://zing.z3950.org/cql/ma/cql-syntax.html" target="_blank">estandar</a> <a href="https://dgcsportal.readme.io/docs/common-query-language" target="_blank">CQL</a>.</p>
+                        <p>Los campos son todos de tipo <em>string</em>, y los nombres de éstos son: <strong>entidad, municipio,
+                        clase_roca, tipo_roca, tipo_suelo, uso_suelo</strong></p>
+                        <textarea style="width: 710px; height: 280px;" name="newtextadvanced" id="newtextadvanced"></textarea>
+                    </form>
+                </div>
+            </div>
+
 
         </div>
+
     </div>
 
 
