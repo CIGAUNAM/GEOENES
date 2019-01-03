@@ -51,6 +51,7 @@ $(function () {
 
     $("#tabs").tabs();
 
+
     function makeLayerWMS() {
         newlayer = L.tileLayer.betterWms('http://localhost:8080/geoserver/ENES/ows?', {
             layers: 'ENES:suelos_suelo',
@@ -141,11 +142,21 @@ $(function () {
         if (scql == 'AND ') {
             cql = cql.substr(4)
         }
-        alert(cql);
 
         return cql;
 
     }
+
+    var fcql = filtro()
+
+
+    $("#ui-id-3").on("click", function () {
+        fcql = filtro()
+        console.log(fcql)
+        $("#newtextadvanced").val(fcql)
+
+    });
+
 
     function checkLength(o, n, min, max) {
         if (o.val().length > max || o.val().length < min) {
@@ -167,6 +178,7 @@ $(function () {
         }, 500);
     }
 
+
     function agregarCapa() {
         var valid = true;
         console.log($("#nombre").val())
@@ -185,8 +197,22 @@ $(function () {
             });
 
             cql = filtro()
+            var fcql = $("#newtextadvanced").val()
 
-            overlays[$("#nombre").val()].setParams({cql_filter: cql});
+            console.log("fcql")
+            console.log(fcql)
+
+
+            if (fcql != "") {
+                console.log(fcql)
+                cql = fcql
+            }
+
+
+            if (cql != "") {
+                overlays[$("#nombre").val()].setParams({cql_filter: cql});
+            }
+
             overlays[$("#nombre").val()].addTo(map)
 
             controles.remove(map)
@@ -236,9 +262,6 @@ $(function () {
         console.log("luego del dialog")
 
     });
-
-
-    //overlays["otro"] = suelos;
 
     var controles = L.control.layers(baseLayers, overlays);
 
