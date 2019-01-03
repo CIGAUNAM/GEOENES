@@ -1,7 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
+from django.http import JsonResponse
+from django.core.serializers import serialize
 from django.views.generic import View
 from . models import *
 from . forms import *
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib
+
 # Create your views here.
 
 class SuelosIndex(View):
@@ -17,9 +22,21 @@ class PolygonSLD(View):
     context = {'self': {'titles': 'Suelos de México'}}
 
     def get(self, request):
-        title = request.GET['title']
-        b = request.GET['color']
-        print(title)
-        print(title.get('color'))
-        print(b)
+        try:
+            colormap = request.GET['colormap']
+            campo = request.GET['campo']
+
+
+            print(colormap)
+
+            self.context['self']['colormap'] = colormap
+            self.context['self']['campo'] = campo
+        except:
+            pass
         return render(request, self.template_name, self.context)
+
+class StyleImage(View):
+    def get(self, request, pk):
+        obj = ColorMap.objects.get(pk=pk)
+        objser = serialize('json', ColorMap.objects.filter(pk=pk))
+        return HttpResponse(objser)

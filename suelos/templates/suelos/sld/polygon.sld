@@ -7,7 +7,7 @@
   <NamedLayer>
     <Name></Name>
     <UserStyle>
-      <Title>{{ self.title }}</Title>
+      <Title>{{ self.colormap }}</Title>
       <FeatureTypeStyle>
         <Rule>
           <Title>gold polygon</Title>
@@ -17,7 +17,7 @@
               </CssParameter>
             </Fill>
             <Stroke>
-              <CssParameter name="stroke">#000000</CssParameter>
+              <CssParameter name="stroke">#000000 {{ self.campo }}</CssParameter>
               <CssParameter name="stroke-width">0.5</CssParameter>
             </Stroke>
           </PolygonSymbolizer>

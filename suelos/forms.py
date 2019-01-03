@@ -46,8 +46,13 @@ class SueloForm(forms.Form):
 
 class ColorMapForm(forms.Form):
     colormap = forms.ModelChoiceField(
-
         queryset=ColorMap.objects.all().order_by('colormap_nombre'),
+        widget=Select2Widget(
+            attrs={'style': 'width: 100%', 'class': 'form-control pull-right'}
+        )
+    )
+    campo = forms.ChoiceField(
+        choices=(('', '-- Campo a colorear --'), ('entidad', 'entidad'), ('municipio', 'municipio'), ('clase_roca', 'clase_roca'), ('tipo_roca', 'tipo_roca'), ('tipo_suelo', 'tipo_suelo'), ('uso_suelo', 'uso_suelo')),
         widget=Select2Widget(
             attrs={'style': 'width: 100%', 'class': 'form-control pull-right'}
         )

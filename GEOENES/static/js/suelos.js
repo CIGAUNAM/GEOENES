@@ -157,6 +157,12 @@ $(function () {
 
     });
 
+    $("#ui-id-1").on("click", function () {
+        fcql = filtro()
+        console.log(fcql)
+        $("#newtextadvanced").val(fcql)
+    });
+
 
     function checkLength(o, n, min, max) {
         if (o.val().length > max || o.val().length < min) {
@@ -262,6 +268,39 @@ $(function () {
         console.log("luego del dialog")
 
     });
+
+    var colormap = null
+
+    $("#id_colormap").change(function () {
+
+        $.ajax('/suelos/styles/images/' + $("#id_colormap").val()).done(function (data) {
+
+            // si hay un estilo seleccionado:
+            if ($("#id_colormap").val() > 0) {
+                // /suelos/styles/polygon.sld
+                console.log($("#id_colormap").val())
+
+                color = jQuery.parseJSON(data)[0].fields
+                console.log(color)
+                console.log(color.colormap_continuous)
+                console.log(color.colormap_discrete)
+                if (color.colormap_continuous != "" && color.colormap_discrete != "") {
+                    $("#samplecolormap").html('<img width="100%" src="/media/' + color.colormap_continuous + '"><img width="100%" src="/media/' + color.colormap_discrete + '">')
+                    console.log('<img width="100%" src="/media/' + color.colormap_continuous + '"><img width="100%" src="/media/' + color.colormap_discrete + '">')
+                }
+                if (color.colormap_continuous != "" && color.colormap_discrete == "") {
+                    $("#samplecolormap").html('<img width="100%" src="/media/' + color.colormap_continuous + '">')
+                }
+                if (color.colormap_continuous == "" && color.colormap_discrete != "") {
+                    $("#samplecolormap").html('<img width="100%" src="/media/' + color.colormap_discrete + '">')
+                }
+            } else {
+                $("#samplecolormap").html('')
+            }
+        })
+
+    });
+
 
     var controles = L.control.layers(baseLayers, overlays);
 
