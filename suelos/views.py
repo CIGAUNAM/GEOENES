@@ -6,6 +6,11 @@ from . models import *
 from . forms import *
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib
+from palettable.cartocolors.diverging import *
+from palettable.cartocolors.sequential import *
+from palettable.cartocolors.qualitative import *
+
+
 
 # Create your views here.
 
@@ -25,14 +30,25 @@ class PolygonSLD(View):
         try:
             colormap = request.GET['colormap']
             campo = request.GET['campo']
+            camposet = Suelo.objects.values_list(campo, flat=True).distinct().order_by(campo)
+            cmap = ColorMap.objects.get(pk=colormap)
 
+            cm = LinearSegmentedColormap.from_list(cmap.colormap_nombre, eval(cmap.colormap_nombre + ".mpl_colors"), N=camposet.count())
+            colors = []
 
-            print(colormap)
+            for i in range(cm.N):
+                rgb = cm(i)[:3]
+                colors.append(matplotlib.colors.rgb2hex(rgb))
 
-            self.context['self']['colormap'] = colormap
+            print(colors)
+            colors.reverse()
+            print(colors)
+
+            self.context['self']['colors'] = colors
             self.context['self']['campo'] = campo
-        except:
-            pass
+            self.context['self']['camposet'] = camposet
+        except Exception as e:
+            print(e)
         return render(request, self.template_name, self.context)
 
 class StyleImage(View):
