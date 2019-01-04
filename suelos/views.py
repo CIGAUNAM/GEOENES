@@ -6,6 +6,7 @@ from . models import *
 from . forms import *
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib
+import urllib
 from palettable.cartocolors.diverging import *
 from palettable.cartocolors.sequential import *
 from palettable.cartocolors.qualitative import *
@@ -30,6 +31,12 @@ class PolygonSLD(View):
         try:
             colormap = request.GET['colormap']
             campo = request.GET['campo']
+            try:
+                cql = request.GET['cql']
+                cql = urllib.parse.unquote(cql, 'latin')
+                print(cql)
+            except:
+                pass
             camposet = Suelo.objects.values_list(campo, flat=True).distinct().order_by(campo)
             cmap = ColorMap.objects.get(pk=colormap)
 
@@ -41,12 +48,20 @@ class PolygonSLD(View):
                 colors.append(matplotlib.colors.rgb2hex(rgb))
 
             print(colors)
-            colors.reverse()
-            print(colors)
+
+            print(list(camposet))
+
+            colorcampo = list(zip(camposet, colors))
+
+
+
+
+
 
             self.context['self']['colors'] = colors
             self.context['self']['campo'] = campo
             self.context['self']['camposet'] = camposet
+            self.context['colorcampo'] = colorcampo
         except Exception as e:
             print(e)
         return render(request, self.template_name, self.context)

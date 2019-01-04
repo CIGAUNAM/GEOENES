@@ -5,24 +5,24 @@
                        xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <NamedLayer>
-        <Name>{{ self.campo }}</Name>
+        <Name>ENES:suelos_suelo</Name>
         <UserStyle>
             <Title>{{ self.campo }}</Title>
             <FeatureTypeStyle>
-                {% for campo in self.camposet %}
+                {% for campo in colorcampo %}
 
                     <Rule>
-                        <Title>{{ campo }}</Title>
+                        <Title>{{ campo.0 }}</Title>
                         <ogc:Filter>
                             <ogc:PropertyIsEqualTo>
                                 <ogc:PropertyName>{{ self.campo }}</ogc:PropertyName>
-                                <ogc:Literal>{{ campo }}</ogc:Literal>
+                                <ogc:Literal>{{ campo.0 }}</ogc:Literal>
                             </ogc:PropertyIsEqualTo>
                         </ogc:Filter>
                         <PolygonSymbolizer>
 
                             <Fill>
-                                <CssParameter name="fill">{{ self.colors.pop }}</CssParameter>
+                                <CssParameter name="fill">{{ campo.1 }}</CssParameter>
                                 <CssParameter name="fill-opacity">0.6</CssParameter>
                             </Fill>
                             <Stroke>

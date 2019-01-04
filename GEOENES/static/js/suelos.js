@@ -221,9 +221,9 @@ $(function () {
 
             var estilo = null
             if ($("#id_colormap").val() > 0 && $("#id_campo").val() != "") {
-                console.log($("#id_colormap").val())
-                console.log($("#id_campo").val())
-                estilo = 'http://127.0.0.1:8000/suelos/styles/polygon.sld?colormap=' + $("#id_colormap").val().toString() + '&campo=' + $("#id_campo").val();
+                console.log($("#id_colormap").val());
+                console.log($("#id_campo").val());
+                estilo = 'http://127.0.0.1:8000/suelos/styles/polygon.sld?colormap=' + $("#id_colormap").val().toString() + '&campo=' + $("#id_campo").val() + '&cql=' + cql;
             }
 
             if (estilo != null) {

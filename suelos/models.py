@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel
+from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 
@@ -56,6 +57,7 @@ class Suelo(models.Model):
     uso_suelo = models.CharField(max_length=120)
     area = models.IntegerField(blank=True, null=True)
     geom = models.MultiPolygonField()
+    data = JSONField()
 
 
 class PaletaColor(models.Model):
