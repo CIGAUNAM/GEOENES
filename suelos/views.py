@@ -7,6 +7,8 @@ from . forms import *
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib
 import urllib
+import base64
+from django.utils.encoding import force_text,force_str
 from palettable.cartocolors.diverging import *
 from palettable.cartocolors.sequential import *
 from palettable.cartocolors.qualitative import *
@@ -32,9 +34,17 @@ class PolygonSLD(View):
             colormap = request.GET['colormap']
             campo = request.GET['campo']
             try:
-                cql = request.GET['cql']
-                cql = urllib.parse.unquote(cql, 'latin')
+                cqlb64 = request.GET['cqlb64']
+                #cql = urllib.parse.unquote(str(cql), 'latin')
+                #cqlb64 = force_str(cql, encoding='latin1', strings_only=False, errors='strict')
+                cql = base64.b64decode(cqlb64).decode("latin1")
                 print(cql)
+                a = Suelo.objects.filter(entidad=cql("('")[1])
+
+                print(campo)
+                print(cqlb64)
+                print(campo in cqlb64)
+
             except:
                 pass
             camposet = Suelo.objects.values_list(campo, flat=True).distinct().order_by(campo)
