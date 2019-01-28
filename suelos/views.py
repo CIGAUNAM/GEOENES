@@ -33,24 +33,34 @@ class PolygonSLD(View):
         try:
             colormap = request.GET['colormap']
             campo = request.GET['campo']
+            camposet = []
             try:
                 cqlb64 = request.GET['cqlb64']
-                #cql = urllib.parse.unquote(str(cql), 'latin')
-                #cqlb64 = force_str(cql, encoding='latin1', strings_only=False, errors='strict')
-                cql = base64.b64decode(cqlb64).decode("latin1")
+                print(cqlb64)
+
+                cql = "SELECT DISTINCT ON(" + campo + ") id, " + campo + " FROM suelos_suelo WHERE " + base64.b64decode(cqlb64).decode("latin1") + " ORDER BY " + campo + ";"
                 print(cql)
-                a = Suelo.objects.filter(entidad=cql("('")[1])
+                objs = Suelo.objects.raw(cql)
 
                 print(campo)
-                print(cqlb64)
-                print(campo in cqlb64)
+                print(objs)
+
+                for i in objs:
+                    camposet.append(eval("i." + campo))
+
 
             except:
                 pass
-            camposet = Suelo.objects.values_list(campo, flat=True).distinct().order_by(campo)
+
+
+
+
             cmap = ColorMap.objects.get(pk=colormap)
 
-            cm = LinearSegmentedColormap.from_list(cmap.colormap_nombre, eval(cmap.colormap_nombre + ".mpl_colors"), N=camposet.count())
+            print("aqui", cmap)
+
+
+            cm = LinearSegmentedColormap.from_list(cmap.colormap_nombre, eval(cmap.colormap_nombre + ".mpl_colors"), N=len(camposet))
             colors = []
 
             for i in range(cm.N):
@@ -59,7 +69,9 @@ class PolygonSLD(View):
 
             print(colors)
 
-            print(list(camposet))
+            print("aqui")
+            print(camposet)
+
 
             colorcampo = list(zip(camposet, colors))
 
